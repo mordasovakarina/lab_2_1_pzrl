@@ -1,4 +1,7 @@
 #include "Vector.h"
+#include <utility>
+#include <stdexcept>
+
 
 Vector::Vector(const ValueType* rawArray, const size_t size, float coef)
     : _size(size), _capacity(size), _multiplicativeCoef(coef)
@@ -21,19 +24,9 @@ Vector::Vector(const ValueType* rawArray, const size_t size, float coef)
 }
 
 Vector::Vector(const Vector& other)
-    : _size(other._size), _capacity(other._size), _multiplicativeCoef(other._multiplicativeCoef)
+    : _size(0), _capacity(0), _multiplicativeCoef(0.2f)
 {
-    if (_size == 0) 
-    {
-        _data = nullptr;
-        return;
-    }
-
-    _data = new ValueType[_capacity];
-    for (size_t i = 0; i < _size; ++i) 
-    {
-        _data[i] = other._data[i];
-    }
+    *this = other;
 }
 
 Vector& Vector::operator=(const Vector& other)
@@ -63,11 +56,9 @@ Vector& Vector::operator=(const Vector& other)
 }
 
 Vector::Vector(Vector&& other) noexcept
-    : _data(other._data), _size(other._size), _capacity(other._capacity), _multiplicativeCoef(other._multiplicativeCoef)
+    : _data(nullptr), _size(0), _capacity(0), _multiplicativeCoef(2.0f)
 {
-    other._data = nullptr;
-    other._size = 0;
-    other._capacity = 0;
+    *this = std::move(other);
 }
 
 Vector& Vector::operator=(Vector&& other) noexcept
@@ -188,7 +179,7 @@ void Vector::popBack()
 {
     if (_size == 0) 
     {
-        throw 1;
+        throw std::out_of_range("Vector is empty");
     }
 	--_size;
 }
@@ -197,7 +188,7 @@ void Vector::popFront()
 {
     if (_size == 0) 
     {
-        throw 1;
+        throw std::out_of_range("Vector is empty");
     }
     erase(0, 1);
 }
